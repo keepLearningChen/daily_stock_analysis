@@ -75,10 +75,10 @@ def _is_us_code(stock_code: str) -> bool:
 class _TushareHttpClient:
     """Lightweight Tushare Pro client that does not require the tushare SDK."""
 
-    def __init__(self, token: str, timeout: int = 30, api_url: str = "http://api.tushare.pro") -> None:
-        self._token = token
-        self._timeout = timeout
-        self._api_url = api_url
+    def __init__(self, token: str, timeout: int = 30, api_url: str = None) -> None:
+      self._token = token
+      self._timeout = timeout
+      self._api_url = api_url or os.getenv("TUSHARE_API_URL", "http://api.tushare.pro")
 
     def query(self, api_name: str, fields: str = "", **kwargs) -> pd.DataFrame:
         req_params = {
@@ -87,7 +87,8 @@ class _TushareHttpClient:
             "params": kwargs,
             "fields": fields,
         }
-        res = requests.post(self._api_url, json=req_params, timeout=self._timeout)
+        res = requests.post(self._api_url, json=req_params, timeout=self._timeout,
+                     proxies={"http": None, "https": None})
         if res.status_code != 200:
             raise Exception(f"Tushare API HTTP {res.status_code}")
 
