@@ -68,6 +68,8 @@ def get_tushare_api() -> Optional[ts.pro_api]:
 
     try:
         api = ts.pro_api(TUSHARE_TOKEN)
+        api._DataApi__token = TUSHARE_TOKEN
+        api._DataApi__http_url = os.getenv("TUSHARE_API_URL", "http://api.tushare.pro")
         # 测试连接
         api.trade_cal(exchange='SSE', start_date='20240101', end_date='20240101')
         print("✓ Tushare API 连接成功")
